@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  ai_service:
+    build: ./ai_service
+    container_name: ai_service
+    network_mode: bridge
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "3000:3000"
+
+  model-runner-setup:
+    image: alpine/curl
+    container_name: model-runner-setup
+    network_mode: host
+    command: >
+      sh -c "
+      echo 'Checking Model Runner...' &&
+      sleep 5 &&
+      curl -f http://localhost:12434/engines/v1/models || 
+      echo 'Model Runner may not be ready'"
+    profiles: ["setup"]
+
+  tg-bot:
+    build: ./telegram_bot
+    restart: unless-stopped
