@@ -24,14 +24,14 @@ async def make_request(message: str) -> str:
     if len(message) > 1000:
         raise ValueError("Сообщение слишком длинное (максимум 1000 символов)")
 
-    # Используем русскоязычную модель Saiga от Russian NLP Lab
-    url = "http://localhost:11434/api/chat"
+    # Подключаемся к Ollama на хост-машине
+    url = "http://host.docker.internal:11434/api/chat"
     payload = {
-        "model": "saiga",  # Русскоязычная модель, оптимизированная для диалогов
+        "model": "llama3:8b",  # Используем установленную модель
         "messages": [
             {
                 "role": "user",
-                "content": message
+                "content": f"Отвечай строго на русском языке. Будь полезным ассистентом. Вопрос: {message}"
             }
         ],
         "stream": False,
@@ -42,7 +42,7 @@ async def make_request(message: str) -> str:
         }
     }
 
-    timeout = aiohttp.ClientTimeout(total=60)  # Увеличиваем таймаут для больших моделей
+    timeout = aiohttp.ClientTimeout(total=90)  # Увеличиваем таймаут для больших моделей
 
     async with aiohttp.ClientSession(timeout=timeout) as session:
         try:

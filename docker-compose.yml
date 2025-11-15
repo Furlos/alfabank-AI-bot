@@ -1,30 +1,20 @@
 version: '3.8'
 
 services:
-  ollama:
-    image: ollama/ollama
-    container_name: ollama
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    restart: unless-stopped
-
   ai_service:
     build: ./ai_service
     container_name: ai_service
-    depends_on:
-      - ollama
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "3000:3000"
     environment:
-      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_HOST=host.docker.internal:11434
+    restart: unless-stopped
 
   tg-bot:
     build: ./Tg_bot
+    container_name: tg-bot
     restart: unless-stopped
     depends_on:
       - ai_service
-
-volumes:
-  ollama_data:
