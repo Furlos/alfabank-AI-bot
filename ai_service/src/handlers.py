@@ -25,7 +25,7 @@ async def make_request(message: str) -> str:
         raise ValueError("Сообщение слишком длинное (максимум 1000 символов)")
 
     # Подключаемся к Ollama на хост-машине
-    url = "http://host.docker.internal:11434/api/chat"
+    url = "http://localhost:11434/api/chat"
     payload = {
         "model": "llama3:8b",  # Используем установленную модель
         "messages": [

@@ -4,17 +4,15 @@ services:
   ai_service:
     build: ./ai_service
     container_name: ai_service
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    ports:
-      - "3000:3000"
+    network_mode: "host"  # Используем сеть хоста
     environment:
-      - OLLAMA_HOST=host.docker.internal:11434
+      - OLLAMA_HOST=localhost:11434  # Теперь localhost указывает на хост
     restart: unless-stopped
 
   tg-bot:
     build: ./Tg_bot
     container_name: tg-bot
+    network_mode: "host"  # tg-bot тоже в сети хоста
     restart: unless-stopped
     depends_on:
       - ai_service
