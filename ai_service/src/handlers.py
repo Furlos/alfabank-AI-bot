@@ -27,7 +27,7 @@ async def make_request(message: str) -> str:
     # Подключаемся к Ollama на хост-машине
     url = "http://localhost:11434/api/chat"
     payload = {
-        "model": "llama3:8b",
+        "model": "tinyllama:1.1b",
         "messages": [
             {
                 "role": "system",
