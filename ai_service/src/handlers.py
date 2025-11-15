@@ -38,7 +38,7 @@ async def make_request(message: str) -> str:
         "options": {
             "temperature": 0.7,
             "top_p": 0.9,
-            "num_predict": 512
+            "num_predict": 64
         }
     }
 
