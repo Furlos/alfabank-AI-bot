@@ -8,6 +8,8 @@ services:
     environment:
       - OLLAMA_HOST=localhost:11434  # Теперь localhost указывает на хост
     restart: unless-stopped
+    ports:
+      - "3000:3000"
 
   tg-bot:
     build: ./Tg_bot
