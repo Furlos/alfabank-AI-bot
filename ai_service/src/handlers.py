@@ -9,26 +9,29 @@ async def make_request(message: str) -> str:
     if len(message) > 1000:
         raise ValueError("Сообщение слишком длинное (максимум 1000 символов)")
 
-    url = "http://localhost:11434/api/generate"  # Используем generate вместо chat - быстрее!
+    url = "http://localhost:11434/api/generate"
     payload = {
-        "model": "tinyllama:1.1b",
-        "prompt": message,  # Прямой промпт без системы сообщений
+        "model": "tinyllama:1.1b",  # Хороший выбор для CPU
+        "prompt": message,
         "stream": False,
         "options": {
-            "temperature": 0.1,  # Сильно уменьшаем для скорости и консистентности
-            "top_p": 0.5,  # Уменьшаем для скорости
-            "top_k": 20,  # Ограничиваем словарь
-            "num_gpu": 1,  # Используем GPU если доступен
-            "main_gpu": 0,  # Основная GPU
-            "low_vram": False,  # Отключаем если достаточно памяти
-            "mirostat": 0,  # Отключаем для скорости
-            "repeat_penalty": 1.0,  # Минимальный penalty
-            "seed": 42  # Фиксируем seed для консистентности
+            "temperature": 0.1,
+            "top_p": 0.5,
+            "top_k": 20,
+            "num_predict": 512,  # Ограничиваем длину ответа
+            "mirostat": 0,
+            "repeat_penalty": 1.0,
+            "seed": 42,
+            # Параметры для оптимизации CPU
+            "num_thread": 8,  # Используем больше потоков процессора
+            "num_batch": 512,  # Размер батча для обработки
+            "use_mlock": True,  # Блокировка памяти для стабильности
+            "use_mmap": True,  # Использование mmap для эффективности
         },
         "system": "Ты - строгий бизнес-ассистент. Отвечай ТОЛЬКО на профессиональные вопросы: бизнес, юриспруденция, договоры, налоги. На остальные вопросы отвечай: 'Извините, но это выходит за рамки моей компетенции как бизнес-ассистента.' Отвечай кратко и по делу."
     }
 
-    timeout = aiohttp.ClientTimeout(total=30)  # Уменьшаем таймаут
+    timeout = aiohttp.ClientTimeout(total=45)  # Немного увеличим для CPU
 
     async with aiohttp.ClientSession(timeout=timeout) as session:
         try:
