@@ -4,7 +4,6 @@ services:
   ai_service:
     build: ./ai_service
     container_name: ai_service
-    network_mode: bridge
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:

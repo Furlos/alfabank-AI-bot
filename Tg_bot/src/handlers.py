@@ -41,7 +41,7 @@ async def comeback_handler(callback: types.CallbackQuery, state: FSMContext):
 async def make_request_handler(message: types.Message, state: FSMContext):
     await state.clear()
     # Исправлено: используем функцию make_request из api
-    response_text = make_request(message.text)
+    response_text = await make_request(message.text)
     await message.answer(
         text=response_text,
         reply_markup=comeback_kb(message.from_user.language_code)
