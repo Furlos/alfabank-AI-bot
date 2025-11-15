@@ -12,7 +12,7 @@ FROM python:3.12-alpine
 WORKDIR /app
 RUN adduser -D backend && \
     chown backend:backend /app
-COPY --from=builder --chown=backend:backend /install /usr/local
+COPY --from=builder --chown=backend:backend / /usr/local
 COPY src/ ./src/
 ENV PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app

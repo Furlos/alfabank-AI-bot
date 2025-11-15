@@ -23,5 +23,5 @@ services:
     profiles: ["setup"]
 
   tg-bot:
-    build: ./telegram_bot
+    build: ./Tg_bot
     restart: unless-stopped

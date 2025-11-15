@@ -11,4 +11,4 @@ COPY --from=builder /frontend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY --chown=frontend:frontend src ./
 USER frontend
-CMD ["python", "main.py"]
+CMD ["python", "src/main.py"]
