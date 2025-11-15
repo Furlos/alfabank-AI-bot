@@ -10,4 +10,5 @@ async def make_request(text: str):
                 data = await response.json()
                 return data
             else:
-                return f"Ошибка: {response.status}"
+                error_text = await response.text()
+                return f"Ошибка {response.status}: {error_text}"

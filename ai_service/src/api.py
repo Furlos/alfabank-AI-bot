@@ -1,7 +1,7 @@
-import logging
 from typing import Optional
+import aiohttp
+import logging
 
-import requests
 from fastapi import APIRouter, HTTPException, status, Body
 from pydantic import BaseModel, Field
 
@@ -52,32 +52,36 @@ async def make_ai_request(ai_request: AIRequest = Body(...)):
     - Ответ от AI модели с флагом успеха
     """
     try:
-        content = make_request(ai_request.message)
+        logger.info(f"Получен запрос к AI: {ai_request.message[:50]}...")
+
+        content = await make_request(ai_request.message)
+
+        logger.info("Успешно получен ответ от AI модели")
         return AIResponse(content=content, success=True)
 
     except ValueError as e:
-        logger.warning(f"Ошибка валидации: {str(e)}")
+        logger.warning(f"Ошибка валидации запроса: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"error": "Неверный запрос", "details": str(e)}
         )
 
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Ошибка при обращении к AI сервису: {str(e)}")
+    except aiohttp.ClientError as e:
+        logger.error(f"Ошибка подключения к AI сервису: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail={"error": "Сервис AI временно недоступен", "details": str(e)}
         )
 
     except (KeyError, IndexError) as e:
-        logger.error(f"Неожиданная структура ответа от AI сервиса: {str(e)}")
+        logger.error(f"Неверная структура ответа от AI сервиса: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={"error": "Ошибка обработки ответа от AI", "details": "Неверный формат данных"}
         )
 
     except Exception as e:
-        logger.error(f"Непредвиденная ошибка в make_ai_request: {str(e)}")
+        logger.error(f"Непредвиденная ошибка при обработке запроса: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={"error": "Внутренняя ошибка сервера", "details": "Попробуйте позже"}
