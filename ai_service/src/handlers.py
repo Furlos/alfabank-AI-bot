@@ -1,3 +1,6 @@
+import aiohttp
+
+
 async def make_request(message: str) -> str:
     if not message or not message.strip():
         raise ValueError("Сообщение не может быть пустым")
