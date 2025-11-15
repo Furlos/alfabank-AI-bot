@@ -36,8 +36,7 @@ async def make_request(message: str) -> str:
         ],
         "stream": False,
         "options": {
-            "temperature": 0.5,
-            "top_p": 0.9,  # Еще более строгий отбор
+            "temperature": 0.7,
             "max_tokens": 300
         }
     }
