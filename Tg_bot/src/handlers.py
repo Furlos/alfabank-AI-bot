@@ -3,7 +3,7 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 
-from messages import start_message, info_message
+from messages import start_message, info_message, main_menu_message
 from keyboards import make_request_msg, main_kb, comeback_kb
 from api import make_request
 
@@ -32,7 +32,7 @@ async def start_request_handler(callback: types.CallbackQuery, state: FSMContext
 async def comeback_handler(callback: types.CallbackQuery, state: FSMContext):
     await state.clear()
     await callback.message.edit_text(
-        text=start_message(callback.from_user.username, callback.from_user.language_code),
+        text=main_menu_message(callback.from_user.language_code),
         reply_markup=main_kb(callback.from_user.language_code)
     )
     await callback.answer()
@@ -40,7 +40,6 @@ async def comeback_handler(callback: types.CallbackQuery, state: FSMContext):
 @main_router.message(StateFilter(RequestStates.waiting_for_request))
 async def make_request_handler(message: types.Message, state: FSMContext):
     await state.clear()
-    # Исправлено: используем функцию make_request из api
     response_text = await make_request(message.text)
     await message.answer(
         text=response_text,

@@ -12,7 +12,7 @@ def main_kb(language: str):
 def make_request_msg(language: str):
     messages = {
         "ru": f"""
-    Sdelai zapros
+    Сделай запрос
     """,
         "en": f"""
     Make request
@@ -30,7 +30,7 @@ def comeback_kb(language: str):
 def comeback_msg(language: str):
     messages = {
         "ru": f"""
-    Vernutsya
+    Вернуться
     """,
         "en": f"""
     Comeback
