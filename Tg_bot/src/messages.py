@@ -1,7 +1,7 @@
 def start_message(username:str,language:str="en"):
     messages = {
         "ru":f"""
-Privet epta {username}!
+Привет! {username}, (тут тоже че то надо думаю)!
 """,
         "en": f"""
 Hello {username}!
@@ -12,7 +12,7 @@ Hello {username}!
 def info_message(language:str="en"):
     messages = {
         "ru":f"""
-Napishi che nibud!
+Напишите ваш запрос!
 """,
         "en": f"""
 Write me something!
@@ -20,10 +20,21 @@ Write me something!
     }
     return messages.get(language, messages["en"])
 
+def main_menu_message(language:str="en"):
+    messages = {
+        "ru":f"""
+Мы в главном меню, что дальше?
+""",
+        "en": f"""
+Back to the main menu. What should we ask now?
+    """
+    }
+    return messages.get(language, messages["en"])
+
 def wait_message(language:str="en"):
     messages = {
         "ru":f"""
-podozdi ya dumau
+Идет процесс осмысления...
 """,
         "en": f"""
 Wait, im thinking
