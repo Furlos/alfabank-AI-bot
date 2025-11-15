@@ -42,7 +42,7 @@ async def make_request(message: str) -> str:
         "options": {
             "temperature": 0.3,  # Уменьшена для большей строгости
             "top_p": 0.8,
-            "num_predict": 128
+            "num_predict": 300
         }
     }
 
