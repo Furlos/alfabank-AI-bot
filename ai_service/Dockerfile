@@ -28,7 +28,7 @@ COPY --from=builder /usr/local/lib/python3.12/site-packages/ /usr/local/lib/pyth
 COPY --from=builder /usr/local/bin/ /usr/local/bin/
 
 # Копируем исходный код
-COPY src/ ./src/
+COPY src/ .
 
 # Настраиваем переменные окружения
 ENV PYTHONUNBUFFERED=1 \
@@ -37,4 +37,4 @@ ENV PYTHONUNBUFFERED=1 \
 USER backend
 EXPOSE 3000
 
-CMD ["uvicorn", "src/main:app", "--host", "0.0.0.0", "--port", "3000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "3000"]
