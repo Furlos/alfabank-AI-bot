@@ -1,7 +1,7 @@
 import aiohttp
 from typing import Optional
 
-
+from config import ollama_url
 async def make_request(message: str) -> str:
     """
     Асинхронно отправляет запрос к AI модели через Ollama и возвращает ответ.
@@ -25,7 +25,7 @@ async def make_request(message: str) -> str:
         raise ValueError("Сообщение слишком длинное (максимум 1000 символов)")
 
     # Подключаемся к Ollama на хост-машине
-    url = "http://localhost:11434/api/chat"
+
     payload = {
         "model": "llama3:8b",  # Используем установленную модель
         "messages": [
@@ -37,16 +37,16 @@ async def make_request(message: str) -> str:
         "stream": False,
         "options": {
             "temperature": 0.7,
-            "max_tokens": 300
+            "max_tokens": 400
         }
     }
 
-    timeout = aiohttp.ClientTimeout(total=90)  # Увеличиваем таймаут для больших моделей
+    timeout = aiohttp.ClientTimeout(total=180)  # Увеличиваем таймаут для больших моделей
 
     async with aiohttp.ClientSession(timeout=timeout) as session:
         try:
             async with session.post(
-                url,
+                ollama_url,
                 json=payload,
                 headers={"Content-Type": "application/json"}
             ) as response:

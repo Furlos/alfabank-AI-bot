@@ -5,7 +5,4 @@ from dotenv import load_dotenv
 load_dotenv()
 
 token = os.getenv("BOT_TOKEN")
-
-# Проверка обязательных переменных
-if not token:
-    raise ValueError("BOT_TOKEN не установлен в переменных окружения")
+ai_service_endpoint = "http://ai_service:3000/ai/make_request"
