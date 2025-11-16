@@ -29,7 +29,7 @@ services:
     build: ./Tg_bot
     container_name: tg-bot
     environment:
-      - BOT_TOKEN=8589682394:AAEuowHVBZCZykDpVDhmvNbv0wLeQusl91I
+      - BOT_TOKEN="Your_tg_bot_token"
     depends_on:
       - ai_service
     restart: unless-stopped
