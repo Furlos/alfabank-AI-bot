@@ -1,24 +1,23 @@
 version: '3.8'
 
 services:
-  ollama:
-    image: ollama/ollama:latest
-    container_name: ollama
+  ai_model:
+    build: ./ai_model
+    container_name: ai_model
     ports:
       - "11434:11434"
     environment:
       - OLLAMA_HOST=0.0.0.0:11434
-      - OLLAMA_MODEL=llama3:8b  # Модель по умолчанию
+      - OLLAMA_MODEL=llama3:8b  # Можешь изменить модель здесь
     volumes:
       - ollama_data:/root/.ollama
     restart: unless-stopped
-    command: >
-      sh -c "
-        /bin/ollama serve &
-        sleep 10 &&
-        ollama pull $$OLLAMA_MODEL &&
-        wait
-      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
   ai_service:
     build: ./ai_service
@@ -26,10 +25,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - OLLAMA_BASE_URL=http://ollama:11434
-      - OLLAMA_MODEL = llama3:8b
+      - OLLAMA_BASE_URL=http://ai_model:11434
+      - OLLAMA_MODEL=llama3:8b
     depends_on:
-      - ollama
+      ai_model:
+        condition: service_healthy
     restart: unless-stopped
 
   tg-bot:

@@ -1,0 +1,1 @@
+ollama_url = "http://ollama:11434"
