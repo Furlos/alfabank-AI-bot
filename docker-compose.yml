@@ -15,6 +15,8 @@ services:
     build: ./Tg_bot
     container_name: tg-bot
     network_mode: "host"  # tg-bot тоже в сети хоста
+    environment:
+      - BOT_TOKEN="Your_bot_token"
     restart: unless-stopped
     depends_on:
       - ai_service
