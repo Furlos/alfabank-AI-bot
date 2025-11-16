@@ -1,22 +1,45 @@
 version: '3.8'
 
 services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+      - OLLAMA_MODEL=llama3:8b  # Модель по умолчанию
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    command: >
+      sh -c "
+        /bin/ollama serve &
+        sleep 10 &&
+        ollama pull $$OLLAMA_MODEL &&
+        wait
+      "
+
   ai_service:
     build: ./ai_service
     container_name: ai_service
-    network_mode: "host"  # Используем сеть хоста
-    environment:
-      - OLLAMA_HOST=localhost:11434  # Теперь localhost указывает на хост
-    restart: unless-stopped
     ports:
       - "3000:3000"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL = llama3:8b
+    depends_on:
+      - ollama
+    restart: unless-stopped
 
   tg-bot:
     build: ./Tg_bot
     container_name: tg-bot
-    network_mode: "host"  # tg-bot тоже в сети хоста
     environment:
       - BOT_TOKEN="Your_bot_token"
-    restart: unless-stopped
     depends_on:
       - ai_service
+    restart: unless-stopped
+
+volumes:
+  ollama_data:

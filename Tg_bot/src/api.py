@@ -1,12 +1,12 @@
 import aiohttp
-async def make_request(text: str):
-    url = "http://localhost:3000/ai/make_request"  # Измените на localhost
+from config import ai_service_endpoint
 
+async def make_request(text: str):
     payload = {"message": text}
 
     async with aiohttp.ClientSession() as session:
         async with session.post(
-                url,
+                ai_service_endpoint,
                 json=payload,
                 headers={"accept": "application/json", "Content-Type": "application/json"}
         ) as response:
