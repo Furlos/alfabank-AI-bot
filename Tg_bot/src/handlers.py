@@ -12,11 +12,12 @@ main_router = Router()
 
 # Список случайных картинок для теста (можно заменить на свои URL)
 RANDOM_IMAGES = [
-    "https://picsum.photos/400/200?random=1",
-    "https://picsum.photos/400/200?random=2",
-    "https://picsum.photos/400/200?random=3",
-    "https://picsum.photos/400/200?random=4",
-    "https://picsum.photos/400/200?random=5"
+    "https://t.me/fotos_alpha/2",
+    "https://t.me/fotos_alpha/3",
+    "https://t.me/fotos_alpha/4",
+    "https://t.me/fotos_alpha/5",
+    "https://t.me/fotos_alpha/6",
+    "https://t.me/fotos_alpha/7"
 ]
 
 
