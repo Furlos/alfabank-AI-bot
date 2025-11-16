@@ -37,11 +37,11 @@ async def make_request(message: str) -> str:
         "stream": False,
         "options": {
             "temperature": 0.7,
-            "max_tokens": 300
+            "max_tokens": 400
         }
     }
 
-    timeout = aiohttp.ClientTimeout(total=90)  # Увеличиваем таймаут для больших моделей
+    timeout = aiohttp.ClientTimeout(total=180)  # Увеличиваем таймаут для больших моделей
 
     async with aiohttp.ClientSession(timeout=timeout) as session:
         try:
