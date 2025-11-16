@@ -2,12 +2,22 @@ from aiogram import Router, types, F
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
+import random
 
 from messages import start_message, info_message, main_menu_message, wait_message
 from keyboards import make_request_msg, main_kb, comeback_kb
 from api import make_request
 
 main_router = Router()
+
+# Список случайных картинок для теста (можно заменить на свои URL)
+RANDOM_IMAGES = [
+    "https://picsum.photos/400/200?random=1",
+    "https://picsum.photos/400/200?random=2",
+    "https://picsum.photos/400/200?random=3",
+    "https://picsum.photos/400/200?random=4",
+    "https://picsum.photos/400/200?random=5"
+]
 
 
 class RequestStates(StatesGroup):
@@ -16,8 +26,13 @@ class RequestStates(StatesGroup):
 
 @main_router.message(Command("start"))
 async def start_handler(message: types.Message):
-    await message.answer(
-        text=start_message(message.from_user.username, message.from_user.language_code),
+    # Выбираем случайную картинку
+    random_image = random.choice(RANDOM_IMAGES)
+
+    # Отправляем фото с сообщением
+    await message.answer_photo(
+        photo=random_image,
+        caption=start_message(message.from_user.username, message.from_user.language_code),
         reply_markup=main_kb(message.from_user.language_code)
     )
 
@@ -25,8 +40,16 @@ async def start_handler(message: types.Message):
 @main_router.callback_query(F.data == "start_request")
 async def start_request_handler(callback: types.CallbackQuery, state: FSMContext):
     await state.set_state(RequestStates.waiting_for_request)
-    await callback.message.edit_text(
-        text=info_message(callback.from_user.language_code),
+
+    # Выбираем случайную картинку
+    random_image = random.choice(RANDOM_IMAGES)
+
+    # Редактируем текущее сообщение, добавляя фото
+    await callback.message.edit_media(
+        media=types.InputMediaPhoto(
+            media=random_image,
+            caption=info_message(callback.from_user.language_code)
+        ),
         reply_markup=comeback_kb(callback.from_user.language_code)
     )
     await callback.answer()
@@ -35,8 +58,16 @@ async def start_request_handler(callback: types.CallbackQuery, state: FSMContext
 @main_router.callback_query(F.data == "start")
 async def comeback_handler(callback: types.CallbackQuery, state: FSMContext):
     await state.clear()
-    await callback.message.edit_text(
-        text=main_menu_message(callback.from_user.language_code),
+
+    # Выбираем случайную картинку для главного меню
+    random_image = random.choice(RANDOM_IMAGES)
+
+    # Редактируем текущее сообщение на главное меню с фото
+    await callback.message.edit_media(
+        media=types.InputMediaPhoto(
+            media=random_image,
+            caption=main_menu_message(callback.from_user.language_code)
+        ),
         reply_markup=main_kb(callback.from_user.language_code)
     )
     await callback.answer()
