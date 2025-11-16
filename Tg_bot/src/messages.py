@@ -106,7 +106,7 @@ def wait_message(language: str = "en"):
 📚 Проверяю актуальную информацию  
 💡 Формирую оптимальное решение
 
-Обычно это занимает 20-40 секунд. Пожалуйста, подождите немного ⏱️
+Пожалуйста, подождите немного ⏱️
 """,
         "en": f"""
 ⏳ **Analyzing your request...**
@@ -115,7 +115,7 @@ def wait_message(language: str = "en"):
 📚 Checking relevant information
 💡 Forming optimal solution
 
-This usually takes 20-40 seconds. Please wait a moment ⏱️
+Please wait a moment ⏱️
 """
     }
     return messages.get(language, messages["en"])
