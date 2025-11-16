@@ -73,13 +73,6 @@ async def make_ai_request(ai_request: AIRequest = Body(...)):
             detail={"error": "Сервис AI временно недоступен", "details": str(e)}
         )
 
-    except (KeyError, IndexError) as e:
-        logger.error(f"Неверная структура ответа от AI сервиса: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={"error": "Ошибка обработки ответа от AI", "details": "Неверный формат данных"}
-        )
-
     except Exception as e:
         logger.error(f"Непредвиденная ошибка при обработке запроса: {str(e)}")
         raise HTTPException(
