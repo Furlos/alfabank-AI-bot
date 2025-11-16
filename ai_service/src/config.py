@@ -1,1 +1,1 @@
-ollama_url = "http://ollama:11434"
+ollama_url = "http://ai_model:11434"
