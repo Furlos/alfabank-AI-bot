@@ -7,23 +7,29 @@ echo "Starting Ollama server..."
 
 # Ждем пока сервер запустится
 echo "Waiting for Ollama to start..."
-sleep 15
+sleep 20
 
-# Проверяем что сервер работает
-if curl -f http://localhost:11434/api/tags; then
-    echo "Ollama server is running, pulling model..."
+# Проверяем что сервер работает (пробуем несколько раз)
+for i in {1..10}; do
+    if curl -f http://localhost:11434/api/tags > /dev/null 2>&1; then
+        echo "Ollama server is running, pulling model..."
 
-    # Скачиваем модель (можно изменить через переменную окружения)
-    ollama pull ${OLLAMA_MODEL:-llama3:8b}
+        # Скачиваем модель
+        ollama pull ${OLLAMA_MODEL:-llama3:8b}
 
-    echo "Model ${OLLAMA_MODEL:-llama3:8b} pulled successfully!"
-    echo "Available models:"
-    ollama list
-else
-    echo "Failed to start Ollama server"
-    exit 1
-fi
+        echo "Model ${OLLAMA_MODEL:-llama3:8b} pulled successfully!"
+        echo "Available models:"
+        ollama list
 
-# Бесконечно ждем, сохраняя контейнер активным
-echo "Ollama is ready to use!"
-wait
+        # Бесконечно ждем
+        echo "Ollama is ready to use!"
+        wait
+        exit 0
+    else
+        echo "Waiting for Ollama to start... (attempt $i/10)"
+        sleep 5
+    fi
+done
+
+echo "Failed to start Ollama server after 10 attempts"
+exit 1

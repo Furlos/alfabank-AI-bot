@@ -1,7 +1,7 @@
 import aiohttp
 from typing import Optional
 
-from .config import ollama_url
+from config import ollama_url
 async def make_request(message: str) -> str:
     """
     Асинхронно отправляет запрос к AI модели через Ollama и возвращает ответ.
