@@ -10,7 +10,6 @@ from api import make_request
 
 main_router = Router()
 
-# Список случайных картинок для теста (можно заменить на свои URL)
 RANDOM_IMAGES = [
     "https://t.me/fotos_alpha/2",
     "https://t.me/fotos_alpha/3",
@@ -27,10 +26,9 @@ class RequestStates(StatesGroup):
 
 @main_router.message(Command("start"))
 async def start_handler(message: types.Message):
-    # Выбираем случайную картинку
+
     random_image = random.choice(RANDOM_IMAGES)
 
-    # Отправляем фото с сообщением
     await message.answer_photo(
         photo=random_image,
         caption=start_message(message.from_user.username, message.from_user.language_code),
@@ -42,10 +40,8 @@ async def start_handler(message: types.Message):
 async def start_request_handler(callback: types.CallbackQuery, state: FSMContext):
     await state.set_state(RequestStates.waiting_for_request)
 
-    # Выбираем случайную картинку
     random_image = random.choice(RANDOM_IMAGES)
 
-    # Редактируем текущее сообщение, добавляя фото
     await callback.message.edit_media(
         media=types.InputMediaPhoto(
             media=random_image,
@@ -60,10 +56,8 @@ async def start_request_handler(callback: types.CallbackQuery, state: FSMContext
 async def comeback_handler(callback: types.CallbackQuery, state: FSMContext):
     await state.clear()
 
-    # Выбираем случайную картинку для главного меню
     random_image = random.choice(RANDOM_IMAGES)
 
-    # Редактируем текущее сообщение на главное меню с фото
     await callback.message.edit_media(
         media=types.InputMediaPhoto(
             media=random_image,
@@ -76,17 +70,15 @@ async def comeback_handler(callback: types.CallbackQuery, state: FSMContext):
 
 @main_router.message(StateFilter(RequestStates.waiting_for_request))
 async def make_request_handler(message: types.Message, state: FSMContext):
-    # Сначала отправляем сообщение "ожидайте"
+
     wait_msg = await message.answer(
         text=wait_message(message.from_user.language_code)
     )
 
     await state.clear()
 
-    # Получаем ответ от API
     response_text = await make_request(message.text)
 
-    # Редактируем сообщение "ожидайте" на результат
     await wait_msg.edit_text(
         text=response_text,
         reply_markup=comeback_kb(message.from_user.language_code)
