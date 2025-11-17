@@ -26,14 +26,13 @@ async def make_request(message: str) -> str:
     if len(message) > 1000:
         raise ValueError("Сообщение слишком длинное (максимум 1000 символов)")
 
-    # Исправленный payload для Ollama
     payload = {
         "model": "llama3:8b",
         "prompt": f"Отвечай только на русском. Ты - строгий бизнес-ассистент для бизнес-менеджера. Отвечай ТОЛЬКО на профессиональные вопросы связанные с: бизнесом, юридическими аспектами, корпоративным правом, договорами, налогами, коммерческой деятельностью, управлением компанией. На все остальные вопросы (личные, развлекательные, технические, не связанные с бизнесом) отвечай строго: 'Извините, но это выходит за рамки моей компетенции как бизнес-ассистента. Я могу помочь только с вопросами бизнеса и юриспруденции.' Сохраняй официальный деловой стиль. Отвечай кратко и по делу.\n\nВопрос: {message}",
         "stream": False,
         "options": {
             "temperature": 0.7,
-            "num_predict": 400  # Исправлено с max_tokens на num_predict
+            "num_predict": 400
         }
     }
 
@@ -49,11 +48,9 @@ async def make_request(message: str) -> str:
                 response.raise_for_status()
                 response_data = await response.json()
 
-                # Извлечение ответа из структуры Ollama (исправленная версия)
                 if "response" in response_data:
                     content = response_data["response"]
                 else:
-                    # Альтернативные варианты извлечения контента
                     content = response_data.get("message", {}).get("content") or response_data.get("choices", [{}])[
                         0].get("text", "")
 
