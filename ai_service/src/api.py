@@ -7,26 +7,19 @@ from pydantic import BaseModel, Field
 
 from handlers import make_request
 
-# Настройка логирования
 logger = logging.getLogger(__name__)
 
-
-# Модели Pydantic для валидации
 class AIRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=1000, description="Сообщение для AI")
-
 
 class AIResponse(BaseModel):
     content: str
     success: bool = True
 
-
 class ErrorResponse(BaseModel):
     error: str
     details: Optional[str] = None
 
-
-# Роутер
 ai_router = APIRouter(prefix="/ai", tags=["ai"])
 
 
