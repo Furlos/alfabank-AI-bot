@@ -1,35 +1,26 @@
-version: '3.8'
-
 services:
   ai_model:
-    build: ./ai_model
-    container_name: ai_model
-    ports:
-      - "11434:11434"
-    environment:
-      - OLLAMA_HOST=0.0.0.0:11434
-      - OLLAMA_MODEL=llama3:8b
+    image: ollama/ollama:latest
     volumes:
       - ollama_data:/root/.ollama
     restart: unless-stopped
 
   ai_service:
     build: ./ai_service
-    container_name: ai_service
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     environment:
-      - OLLAMA_BASE_URL=http://ai_model:11434
-      - OLLAMA_MODEL=llama3:8b
+      OLLAMA_BASE_URL: http://ai_model:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3:8b}
     depends_on:
       - ai_model
     restart: unless-stopped
 
   tg-bot:
     build: ./Tg_bot
-    container_name: tg-bot
     environment:
-      - BOT_TOKEN="Your_tg_bot_token"
+      BOT_TOKEN: ${BOT_TOKEN:?Set BOT_TOKEN in a local .env file}
+      AI_SERVICE_ENDPOINT: http://ai_service:3000/ai/make_request
     depends_on:
       - ai_service
     restart: unless-stopped

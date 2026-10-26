@@ -1,173 +1,69 @@
-# Alfabank AI Bot
+# Alfabank AI Bot — Telegram + FastAPI + Ollama prototype
 
-![Deploy Status](https://img.shields.io/badge/deploy-success-brightgreen)
-![Docker](https://img.shields.io/badge/docker-ready-blue)
-![Telegram](https://img.shields.io/badge/telegram-bot-blue)
-![AI](https://img.shields.io/badge/LLM-powered-orange)
+Educational team prototype of a business-oriented AI assistant. This repository is **not** affiliated with or endorsed by Alfa-Bank.
 
-**Умный помощник для малого бизнеса в Telegram**
+**Status:** source code and a repeatable local Docker setup are provided. The Telegram bot and the model are **not independently verified to be available online now**. Do not treat an old green badge, public bot handle or presentation as evidence of current uptime.
 
----
+## Architecture
 
-## 📑 Быстрая навигация
-
-| Раздел | Описание |
-|--------|-----------|
-| [🎯 О проекте](#-о-проекте) | Основная информация |
-| [👥 Команда](#-команда) | Состав команды и роли |
-| [🚀 Возможности](#-возможности) | Ключевые функции бота |
-| [🏗 Архитектура](#-архитектура) | Схема работы системы |
-| [⚙️ Установка](#-установка) | Быстрый старт |
-| [💼 Ценность](#-ценность) | Бизнес-преимущества |
-| [📊 Критерии](#-критерии) | Показатели успеха |
-| [🎪 Демо](#-демо) | Тестовый бот |
-| [📞 Контакты](#-контакты) | Связь с разработчиками |
-
----
-
-## 🎯 О проекте
-
-**Alfabank AI Bot** — рабочий прототип интеллектуального помощника для предпринимателей, который решает бизнес-задачи прямо в Telegram. Бот использует передовые LLM-технологии для анализа запросов и предоставления контекстных консультаций.
-
-## 📊 Презентация проекта
-
-*[📑 Смотреть полную презентацию на Google Slides](https://docs.google.com/presentation/d/1FrMplSisBhOxb_LLB1cpmdtLT1Fe1CFn/edit?usp=sharing&ouid=110675393429354543626&rtpof=true&sd=true)**
-
-[⬆ Наверх](#alfabank-ai-bot)
-
----
-
-## 👥 Команда
-
-| Роль | Участник | Вклад |
-|------|----------|--------|
-| **Fullstack-разработчик** | Lev Primak (Furlos) | Архитектура, интеграция, деплой |
-| **Frontend-разработчик** | Larionov Nikita | UI/UX Telegram-бота |
-| **Менеджер проекта** | Smirnova Mariya | Бизнес-анализ, постановка задач |
-| **QA & Дизайнер** | Reval Sadrislamov | Тестирование, дизайн |
-
-[⬆ Наверх](#alfabank-ai-bot)
-
----
-
-## 🚀 Возможности
-
-- 🧠 **Анализ бизнес-запросов**
-- ⚖️ **Юридические консультации**
-- 📊 **Финансовые расчеты**
-- 🎯 **Маркетинговые рекомендации**
-- 🚀 **Масштабируемая архитектура**
-
-[⬆ Наверх](#alfabank-ai-bot)
-
----
-
-## 🏗 Архитектура
-
-```mermaid
-graph TB
-    A[Пользователь] --> B[Telegram Bot]
-    B --> C[AI Service]
-    C --> D[LLM Model]
-    
-    style A fill:#0088cc
-    style B fill:#3399ff
-    style C fill:#6666ff
-    style D fill:#ff6666
+```text
+Telegram user -> Aiogram bot -> FastAPI AI proxy -> Ollama -> selected local model
 ```
 
-**Компоненты:**
-- `tg_bot/` — Telegram-бот
-- `ai_service/` — сервис нейросети
-- `ai_model/` — LLM модель
+- `Tg_bot/`: Telegram user interface.
+- `ai_service/`: model API proxy and response handling.
+- `ai_model/`: legacy container build (Compose now uses the official Ollama image).
+- `docker-compose.yml`: local infrastructure.
 
-[⬆ Наверх](#alfabank-ai-bot)
+## Local run
 
----
+Requires Docker Compose, enough RAM/disk space for the selected model and a Telegram bot token.
 
-## ⚙️ Установка
+1. Copy `.env.example` to `.env` and insert your real `BOT_TOKEN`.
+2. Run `docker compose up -d --build`.
+3. Pull the model (one-time download, can take several GB):
 
-### Требования:
-- 🐳 **Docker** и **Docker Compose**
-- 🤖 **Telegram Bot Token**
+```bash
+docker compose exec ai_model ollama pull llama3:8b
+```
 
-### Установка и запуск:
+If you set a different `OLLAMA_MODEL` in `.env`, pull that exact model instead. The local system needs enough memory to load it.
 
-1. **Клонирование репозитория**
-   ```bash
-   git clone https://github.com/Furlos/alfabank-AI-bot.git
-   cd alfabank-AI-bot
-   ```
+4. Try the health endpoint on the Docker host:
 
-2. **Настройка окружения**
-   ```bash
-   # Укажите свой токен в docker-compose.yml
-   BOT_TOKEN="your_telegram_bot_token"
-   ```
+```text
+http://127.0.0.1:3000/health
+```
 
-3. **Запуск системы**
-   ```bash
-   docker-compose up --build
-   ```
+5. Send a message to your Telegram bot. View logs with `docker compose logs -f tg-bot ai_service ai_model`.
 
-[⬆ Наверх](#alfabank-ai-bot)
+`GET /health` checks that FastAPI is up; it does **not** imply the model has finished downloading or is ready.
 
----
+The Ollama API is not exposed publicly; the FastAPI demo is bound only to `127.0.0.1` on the host. Never commit your bot token.
 
-## 💼 Ценность
+## Tests
 
-**Для предпринимателей:**
-- Быстрый старт без настройки
-- Экспертные знания
-- Доступность в Telegram
+```bash
+cd ai_service
+pip install -r requirements.txt pytest httpx
+PYTHONPATH=src pytest -q
+```
 
-**Для бизнеса:**
-- Готовность к внедрению
-- Гибкость и масштабируемость
+CI tests validation and error behavior using mocked model calls; **no real Ollama inference is tested**.
 
-[⬆ Наверх](#alfabank-ai-bot)
+## Safety and limitations
 
----
+- Generated answers can be wrong. The bot is a technical demo, **not** a replacement for qualified legal or financial advisers.
+- Model inference requires separately available CPU/GPU resources and is not a free always-on cloud service.
+- The demo does not include user authentication, billing, robust rate limits, uptime guarantees or production monitoring.
+- Telegram UI flow and real model responses still need end-to-end verification on the target machine.
 
-## 📊 Критерии
+## Team contributions
 
-### 🎯 Ключевые показатели успеха:
+The original prototype was built as a team exercise: Lev Primak (architecture/integration/deployment), Larionov Nikita (Telegram UI), Smirnova Mariya (business analysis), and Reval Sadrislamov (QA/design). Attribution is retained from the original project documentation.
 
-| Критерий | Результат |
-|----------|-----------|
-| ✅ **Стабильность** | Бесперебойная работа системы |
-| ✅ **Точность** | Релевантные и полезные ответы |
-| ✅ **Удобство** | Интуитивный пользовательский интерфейс |
-| ✅ **Масштабируемость** | Готовность к росту нагрузки |
-| ✅ **Гибкость** | Адаптация под новые бизнес-задачи |
+## Portfolio
 
-[⬆ Наверх](#alfabank-ai-bot)
+This project demonstrates asynchronous Telegram integration, FastAPI, HTTP requests, Docker Compose, validation and LLM proxying.
 
----
-
-## 🎪 Демо
-
-### 🔥 Живой прототип доступен прямо сейчас!
-
-**Telegram бот:** [@Markus_aialpha_bot](https://t.me/Markus_aialpha_bot)
-
-> ⏳ **Примечание:** LLM модель может отвечать медленнее (40-50 секунд) из-за тестового сервера. На продакш-сервере скорость будет значительно выше.
-
-**Протестируйте все возможности AI-помощника для бизнеса в реальном времени!**
-
-[⬆ Наверх](#alfabank-ai-bot)
-
----
-
-## 📞 Контакты
-
-**Техническая поддержка:**  
-👨‍💻 **Lev Primak (Furlos)** — [@Fyrlosik](https://t.me/Fyrlosik)
-
-[⬆ Наверх](#alfabank-ai-bot)
-
----
-
-*Alfabank AI Bot — умные решения для вашего бизнеса* 🚀
-
-
+For service inquiries, see the developer profile: [Furlos](https://github.com/Furlos).
